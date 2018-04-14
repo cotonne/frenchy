@@ -11,6 +11,7 @@ grammar Frenchy;
 /*
  * Lexer Rules
  */
+BOOLEAN    : 'vrai'|'faux';
 WORD       : ('a'..'z'+);
 VALUE      : ('0'..'9'+);
 WHITESPACE : ( '\t' | ' ' | '\r' | '\n'| '\u000C' )+ -> skip ;
@@ -20,5 +21,5 @@ ADD        : '+';
  */
 program    : (variable)+ EOF;
 element    : VALUE|WORD;
-statement  : element (ADD element)*;
+statement  : BOOLEAN|element (ADD element)*;
 variable   : 'soit' WORD 'valant' statement;

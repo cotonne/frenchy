@@ -57,4 +57,13 @@ public class VariableTest {
 
         assertThat(listener.variablesByName).containsValues(Variable.of("z", 5));
     }
+
+    @Test
+    public void should_understand_booleans() {
+        String text = "soit x valant vrai";
+
+        analyze(text, listener);
+
+        assertThat(listener.variablesByName).containsValues(Variable.of("x", true));
+    }
 }

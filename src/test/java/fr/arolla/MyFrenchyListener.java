@@ -10,8 +10,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MyFrenchyListener implements FrenchyListener {
+    public static final String VRAI = "vrai";
     public Map<String, Variable> variablesByName = new HashMap<>();
     private int currentValue;
+    private boolean isBoolean;
+    private boolean currentBooleanValue;
 
     public void visitTerminal(TerminalNode node) {
 
@@ -38,7 +41,13 @@ public class MyFrenchyListener implements FrenchyListener {
     }
 
     public void enterStatement(fr.arolla.parser.FrenchyParser.StatementContext ctx) {
-        currentValue = 0;
+        if (ctx.BOOLEAN() == null) {
+            isBoolean = false;
+            currentValue = 0;
+        } else {
+            isBoolean = true;
+            currentBooleanValue = VRAI.equals(ctx.BOOLEAN().getText());
+        }
     }
 
     public void exitStatement(fr.arolla.parser.FrenchyParser.StatementContext ctx) {
@@ -50,14 +59,20 @@ public class MyFrenchyListener implements FrenchyListener {
 
     public void exitVariable(fr.arolla.parser.FrenchyParser.VariableContext ctx) {
         String name = ctx.WORD().getText();
-        variablesByName.put(name, Variable.of(name, currentValue));
+        Variable variable;
+        if (isBoolean) {
+            variable = Variable.of(name, currentBooleanValue);
+        } else {
+            variable = Variable.of(name, currentValue);
+        }
+        variablesByName.put(name, variable);
     }
 
     public void enterElement(fr.arolla.parser.FrenchyParser.ElementContext ctx) {
         if (ctx.VALUE() != null) {
             currentValue += Integer.parseInt(ctx.VALUE().getSymbol().getText());
         } else {
-            currentValue += variablesByName.get(ctx.WORD().getText()).value;
+            currentValue += (int) variablesByName.get(ctx.WORD().getText()).value;
         }
     }
 

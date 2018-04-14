@@ -5,16 +5,16 @@ import lombok.ToString;
 
 @EqualsAndHashCode
 @ToString
-public class Variable {
+public class Variable<T> {
     private final String name;
-    public final int value;
+    public final T value;
 
-    private Variable(String name, int value) {
+    private Variable(String name, T value) {
         this.name = name;
         this.value = value;
     }
 
-    public static Variable of(String name, int value) {
-        return new Variable(name, value);
+    public static <T> Variable of(String name, T value) {
+        return new Variable<T>(name, value);
     }
 }

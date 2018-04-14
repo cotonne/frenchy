@@ -7,7 +7,7 @@ import lombok.ToString;
 @ToString
 public class Variable {
     private final String name;
-    private final int value;
+    public final int value;
 
     private Variable(String name, int value) {
         this.name = name;

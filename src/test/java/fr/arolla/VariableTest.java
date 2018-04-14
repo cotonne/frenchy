@@ -22,7 +22,7 @@ public class VariableTest {
 
         analyze(text, listener);
 
-        assertThat(listener.variables).containsExactly(Variable.of("x", 1));
+        assertThat(listener.variablesByName.values()).containsExactly(Variable.of("x", 1));
     }
 
     @Test
@@ -31,7 +31,7 @@ public class VariableTest {
 
         analyze(text, listener);
 
-        assertThat(listener.variables).containsExactly(Variable.of("x", 2));
+        assertThat(listener.variablesByName.values()).containsExactly(Variable.of("x", 2));
     }
 
 
@@ -42,7 +42,19 @@ public class VariableTest {
 
         analyze(text, listener);
 
-        assertThat(listener.variables).containsExactly(
+        assertThat(listener.variablesByName.values()).containsExactly(
                 Variable.of("x", 2), Variable.of("y", 3));
+    }
+
+
+    @Test
+    public void should_add_two_variables() {
+        String text = "soit x valant 1 + 1\n" +
+                "soit y valant 1 + 2\n" +
+                "soit z valant x + y";
+
+        analyze(text, listener);
+
+        assertThat(listener.variablesByName).containsValues(Variable.of("z", 5));
     }
 }

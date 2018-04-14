@@ -19,5 +19,6 @@ ADD        : '+';
  * Parser Rules
  */
 program    : (variable)+ EOF;
-statement  : VALUE (ADD VALUE)*;
+element    : VALUE|WORD;
+statement  : element (ADD element)*;
 variable   : 'soit' WORD 'valant' statement;

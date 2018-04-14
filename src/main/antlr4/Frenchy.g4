@@ -11,11 +11,13 @@ grammar Frenchy;
 /*
  * Lexer Rules
  */
-WORD : ('a'..'z'+);
-VALUE : ('0'..'9'+);
+WORD       : ('a'..'z'+);
+VALUE      : ('0'..'9'+);
 WHITESPACE : ( '\t' | ' ' | '\r' | '\n'| '\u000C' )+ -> skip ;
+ADD        : '+';
 /*
  * Parser Rules
  */
-program: variable EOF;
-variable: 'soit' WORD 'valant' VALUE;
+program    : variable EOF;
+statement  : VALUE (ADD VALUE)*;
+variable   : 'soit' WORD 'valant' statement;

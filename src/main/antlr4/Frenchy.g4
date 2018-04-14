@@ -18,6 +18,6 @@ ADD        : '+';
 /*
  * Parser Rules
  */
-program    : variable EOF;
+program    : (variable)+ EOF;
 statement  : VALUE (ADD VALUE)*;
 variable   : 'soit' WORD 'valant' statement;

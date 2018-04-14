@@ -57,4 +57,28 @@ public class VariableTest {
         assertThat(listener.variables).containsExactly(Variable.of("x", 2));
     }
 
+
+    @Test
+    public void should_manage_multiple_variables() {
+        MyFrenchyListener listener = new MyFrenchyListener();
+
+        String text = "soit x valant 1 + 1\n" +
+                "soit y valant 1 + 2";
+
+        fr.arolla.lexer.FrenchyLexer lexer = new fr.arolla.lexer.FrenchyLexer(CharStreams.fromString(text));
+        // Get a list of matched tokens
+        CommonTokenStream tokens = new CommonTokenStream(lexer);
+
+        // Pass the tokens to the parser
+        fr.arolla.parser.FrenchyParser parser = new fr.arolla.parser.FrenchyParser(tokens);
+
+        FrenchyParser.ProgramContext program = parser.program();
+
+        // Walk it and attach our listener
+        ParseTreeWalker walker = new ParseTreeWalker();
+        walker.walk(listener, program);
+
+        assertThat(listener.variables).containsExactly(
+                Variable.of("x", 2), Variable.of("y", 3));
+    }
 }

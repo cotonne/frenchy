@@ -14,12 +14,15 @@ grammar Frenchy;
 BOOLEAN    : 'vrai'|'faux';
 WORD       : ('a'..'z'+);
 VALUE      : ('0'..'9'+);
+// Pour ne pas être sensible aux espaces
 WHITESPACE : ( '\t' | ' ' | '\r' | '\n'| '\u000C' )+ -> skip ;
 ADD        : '+';
+EQUALS     : 'égale';
 /*
  * Parser Rules
  */
-program    : (variable)+ EOF;
-element    : VALUE|WORD;
-statement  : BOOLEAN|element (ADD element)*;
-variable   : 'soit' WORD 'valant' statement;
+program              : (variableDefinition)+ EOF;
+element              : VALUE|BOOLEAN|WORD;
+operation            : EQUALS|ADD;
+statement            : element (operation element)*;
+variableDefinition   : 'soit' WORD 'valant' statement;

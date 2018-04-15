@@ -1,82 +1,49 @@
 package fr.arolla;
 
-import fr.arolla.parser.FrenchyListener;
+import fr.arolla.operations.Operations;
+import fr.arolla.values.BooleanValue;
+import fr.arolla.values.IntegerValue;
+import fr.arolla.values.Value;
 import fr.arolla.variables.Variable;
-import org.antlr.v4.runtime.ParserRuleContext;
-import org.antlr.v4.runtime.tree.ErrorNode;
-import org.antlr.v4.runtime.tree.TerminalNode;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Stack;
 
-public class MyFrenchyListener implements FrenchyListener {
+public class MyFrenchyListener extends fr.arolla.parser.FrenchyBaseListener {
     public static final String VRAI = "vrai";
     public Map<String, Variable> variablesByName = new HashMap<>();
-    private int currentValue;
-    private boolean isBoolean;
-    private boolean currentBooleanValue;
+    private Stack<Object> stack = new Stack<>();
 
-    public void visitTerminal(TerminalNode node) {
-
-    }
-
-    public void visitErrorNode(ErrorNode node) {
-
-    }
-
-    public void enterEveryRule(ParserRuleContext ctx) {
-
-    }
-
-    public void exitEveryRule(ParserRuleContext ctx) {
-
-    }
-
-    public void enterProgram(fr.arolla.parser.FrenchyParser.ProgramContext ctx) {
-
-    }
-
-    public void exitProgram(fr.arolla.parser.FrenchyParser.ProgramContext ctx) {
-
-    }
-
-    public void enterStatement(fr.arolla.parser.FrenchyParser.StatementContext ctx) {
-        if (ctx.BOOLEAN() == null) {
-            isBoolean = false;
-            currentValue = 0;
-        } else {
-            isBoolean = true;
-            currentBooleanValue = VRAI.equals(ctx.BOOLEAN().getText());
-        }
-    }
-
-    public void exitStatement(fr.arolla.parser.FrenchyParser.StatementContext ctx) {
-
-    }
-
-    public void enterVariable(fr.arolla.parser.FrenchyParser.VariableContext ctx) {
-    }
-
-    public void exitVariable(fr.arolla.parser.FrenchyParser.VariableContext ctx) {
+    public void exitVariableDefinition(fr.arolla.parser.FrenchyParser.VariableDefinitionContext ctx) {
         String name = ctx.WORD().getText();
-        Variable variable;
-        if (isBoolean) {
-            variable = Variable.of(name, currentBooleanValue);
-        } else {
-            variable = Variable.of(name, currentValue);
-        }
-        variablesByName.put(name, variable);
+        variablesByName.put(name, Variable.of(name, (Value) stack.pop()));
     }
 
     public void enterElement(fr.arolla.parser.FrenchyParser.ElementContext ctx) {
+        Value right;
         if (ctx.VALUE() != null) {
-            currentValue += Integer.parseInt(ctx.VALUE().getSymbol().getText());
+            right = new IntegerValue(Integer.parseInt(ctx.VALUE().getSymbol().getText()));
+        } else if (ctx.BOOLEAN() != null) {
+            right = new BooleanValue("vrai".equals(ctx.BOOLEAN().getText()));
         } else {
-            currentValue += (int) variablesByName.get(ctx.WORD().getText()).value;
+            right = variablesByName.get(ctx.WORD().getText());
+        }
+
+        if (!stack.isEmpty()) {
+            String operation = (String) stack.pop();
+            Value left = (Value) stack.pop();
+            right = Operations.byName(operation).o.apply(right, left);
+        }
+        stack.push(right);
+    }
+
+    public void enterOperation(fr.arolla.parser.FrenchyParser.OperationContext ctx) {
+        if (ctx.ADD() != null) {
+            stack.push(ctx.ADD().getSymbol().getText());
+        } else {
+            stack.push(ctx.EQUALS().getSymbol().getText());
         }
     }
 
-    public void exitElement(fr.arolla.parser.FrenchyParser.ElementContext ctx) {
-
-    }
 }

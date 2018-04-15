@@ -1,5 +1,6 @@
 package fr.arolla;
 
+import fr.arolla.values.BooleanValue;
 import fr.arolla.variables.Variable;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,16 +22,16 @@ public class BooleanVariableTest {
 
         analyze(text, listener);
 
-        assertThat(listener.variablesByName).containsValues(Variable.of("x", true));
+        assertThat(listener.variablesByName).containsValues(Variable.of("x", new BooleanValue(true)));
     }
 
 
     @Test
     public void should_create_a_initialized_variable() {
-        String text = "soit x valant 1 egale 1";
+        String text = "soit x valant 1 égale 0";
 
         analyze(text, listener);
 
-        assertThat(listener.variablesByName.values()).containsExactly(Variable.of("x", true));
+        assertThat(listener.variablesByName.values()).containsExactly(Variable.of("x", new BooleanValue(false)));
     }
 }

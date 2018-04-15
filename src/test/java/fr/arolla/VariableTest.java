@@ -1,10 +1,11 @@
 package fr.arolla;
 
+import fr.arolla.values.IntegerValue;
 import fr.arolla.variables.Variable;
 import org.junit.Before;
 import org.junit.Test;
 
-import static fr.arolla.Analyzer.*;
+import static fr.arolla.Analyzer.analyze;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class VariableTest {
@@ -22,7 +23,7 @@ public class VariableTest {
 
         analyze(text, listener);
 
-        assertThat(listener.variablesByName.values()).containsExactly(Variable.of("x", 1));
+        assertThat(listener.variablesByName.values()).containsExactly(Variable.of("x", new IntegerValue(1)));
     }
 
     @Test
@@ -31,7 +32,7 @@ public class VariableTest {
 
         analyze(text, listener);
 
-        assertThat(listener.variablesByName.values()).containsExactly(Variable.of("x", 2));
+        assertThat(listener.variablesByName.values()).containsExactly(Variable.of("x", new IntegerValue(2)));
     }
 
 
@@ -43,7 +44,7 @@ public class VariableTest {
         analyze(text, listener);
 
         assertThat(listener.variablesByName.values()).containsExactly(
-                Variable.of("x", 2), Variable.of("y", 3));
+                Variable.of("x", new IntegerValue(2)), Variable.of("y", new IntegerValue(3)));
     }
 
 
@@ -55,6 +56,6 @@ public class VariableTest {
 
         analyze(text, listener);
 
-        assertThat(listener.variablesByName).containsValues(Variable.of("z", 5));
+        assertThat(listener.variablesByName).containsValues(Variable.of("z", new IntegerValue(5)));
     }
 }

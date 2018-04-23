@@ -24,6 +24,7 @@ public class MyFrenchyVisitor implements FrenchyVisitor<MyFrenchyVisitor> {
 
     public Stack<Object> stack = new Stack<>();
     private Map<String, Variable> variablesByName = new HashMap<>();
+    private Map<String, List<FunctionStatementContext>> functionsByName = new HashMap<>();
 
     @Override
     public MyFrenchyVisitor visitProgram(ProgramContext ctx) {
@@ -44,10 +45,23 @@ public class MyFrenchyVisitor implements FrenchyVisitor<MyFrenchyVisitor> {
             boolean value = VRAI.equals(ctx.BOOLEAN().getText());
             item = new BooleanValue(value);
         } else {
-            item = variablesByName.get(ctx.WORD().getText()).value;
+            String text = ctx.WORD().getText();
+            if (variablesByName.containsKey(text)) {
+                item = variablesByName.get(text);
+            } else {
+                item = evaluate(functionsByName.get(text));
+            }
         }
         stack.push(item);
         return this;
+    }
+
+    private Value evaluate(List<FunctionStatementContext> functionDefinitionContexts) {
+        MyFrenchyVisitor visitor = this;
+        for (FunctionStatementContext line : functionDefinitionContexts) {
+            visitor = line.accept(visitor);
+        }
+        return (Value) visitor.stack.pop();
     }
 
     @Override
@@ -85,9 +99,9 @@ public class MyFrenchyVisitor implements FrenchyVisitor<MyFrenchyVisitor> {
             l.add(ctx.getChild(i).accept(this).stack.pop());
         }
         while (l.size() > 1) {
-            IntegerValue left = (IntegerValue) l.remove(0);
+            Value left = (Value) l.remove(0);
             BiFunction<Value, Value, Value> operation = (BiFunction<Value, Value, Value>) l.remove(0);
-            IntegerValue right = (IntegerValue) l.remove(0);
+            Value right = (Value) l.remove(0);
             l.add(0, operation.apply(left, right));
         }
         stack.push(l.get(0));
@@ -120,6 +134,20 @@ public class MyFrenchyVisitor implements FrenchyVisitor<MyFrenchyVisitor> {
     }
 
     @Override
+    public MyFrenchyVisitor visitFunctionStatement(FunctionStatementContext ctx) {
+        for (int i = 0; i < ctx.getChildCount(); i++) {
+            ctx.getChild(i).accept(this);
+        }
+        return this;
+    }
+
+    @Override
+    public MyFrenchyVisitor visitFunctionDefinition(FunctionDefinitionContext ctx) {
+        functionsByName.put(ctx.WORD().getText(), ctx.functionStatement());
+        return this;
+    }
+
+    @Override
     public MyFrenchyVisitor visit(ParseTree tree) {
         for (int i = 0; i < tree.getChildCount(); i++) {
             MyFrenchyVisitor aStack = tree.getChild(i).accept(this);
@@ -145,7 +173,8 @@ public class MyFrenchyVisitor implements FrenchyVisitor<MyFrenchyVisitor> {
 
     @Override
     public MyFrenchyVisitor visitErrorNode(ErrorNode node) {
-        return node.accept(this);
+        System.err.println(node);
+        return this;
     }
 
     MyFrenchyVisitor visit(String text) {

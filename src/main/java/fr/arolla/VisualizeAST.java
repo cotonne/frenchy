@@ -5,7 +5,6 @@ import fr.arolla.frenchy.FrenchyParser;
 import org.antlr.v4.gui.TreeViewer;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.tree.ParseTree;
 
 import javax.swing.*;
 import java.util.Arrays;
@@ -13,7 +12,8 @@ import java.util.Arrays;
 public class VisualizeAST {
     public static void main(String[] args) {
         //prepare token stream
-        String s = "soit x valant si vrai alors 1 sinon 0";
+        String s = "étant donné la fonction f retournant 2 alors " +
+                "soit x valant f";
         FrenchyLexer lexer = new FrenchyLexer(CharStreams.fromString(s));
         // Get a list of matched tokens
         CommonTokenStream tokens = new CommonTokenStream(lexer);
@@ -21,8 +21,7 @@ public class VisualizeAST {
         // Pass the tokens to the parser
         FrenchyParser parser = new FrenchyParser(tokens);
 
-        FrenchyParser.ProgramContext program = parser.program();
-        ParseTree tree = program.getChild(0);
+        FrenchyParser.ProgramContext tree = parser.program();
 
         //show AST in console
         System.out.println(tree.toStringTree(parser));

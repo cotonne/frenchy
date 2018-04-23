@@ -19,7 +19,7 @@ EQUALS     : 'égale';
 /*
  * Parser Rules
  */
-program              : (variableDefinition|ifStatement)+ EOF;
+program              : (variableDefinition|functionDefinition)+ EOF;
 element              : VALUE|BOOLEAN|WORD;
 operation            : EQUALS|ADD;
 ifStatement          : 'si' condition 'alors' statementThen 'sinon' statementElse;
@@ -28,3 +28,5 @@ statementElse        : statement;
 statement            : ifStatement|element (operation element)*;
 condition            : BOOLEAN|element EQUALS element;
 variableDefinition   : 'soit' WORD 'valant' statement;
+functionStatement    : variableDefinition|statement;
+functionDefinition   : 'étant donné la fonction' WORD 'retournant' functionStatement+ 'alors';

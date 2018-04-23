@@ -5,24 +5,23 @@ import fr.arolla.variables.Variable;
 import org.junit.Before;
 import org.junit.Test;
 
-import static fr.arolla.Analyzer.analyze;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class BooleanVariableTest {
-    private MyFrenchyListener listener;
+    private MyFrenchyVisitor visitor;
 
     @Before
     public void setUp() {
-        listener = new MyFrenchyListener();
+        visitor = new MyFrenchyVisitor();
     }
 
     @Test
     public void should_exist() {
         String text = "soit x valant vrai";
 
-        analyze(text, listener);
+        MyFrenchyVisitor context = visitor.visit(text);
 
-        assertThat(listener.variablesByName).containsValues(Variable.of("x", new BooleanValue(true)));
+        assertThat(context.stack).contains(Variable.of("x", new BooleanValue(true)));
     }
 
 
@@ -30,8 +29,8 @@ public class BooleanVariableTest {
     public void should_create_a_initialized_variable() {
         String text = "soit x valant 1 égale 0";
 
-        analyze(text, listener);
+        MyFrenchyVisitor context = visitor.visit(text);
 
-        assertThat(listener.variablesByName.values()).containsExactly(Variable.of("x", new BooleanValue(false)));
+        assertThat(context.stack).containsExactly(Variable.of("x", new BooleanValue(false)));
     }
 }

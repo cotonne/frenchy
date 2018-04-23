@@ -1,11 +1,9 @@
 grammar Frenchy;
 
 @lexer::header {
-  package fr.arolla.lexer;
 }
 
 @parser::header {
-  package fr.arolla.parser;
 }
 
 /*
@@ -21,8 +19,12 @@ EQUALS     : 'égale';
 /*
  * Parser Rules
  */
-program              : (variableDefinition)+ EOF;
+program              : (variableDefinition|ifStatement)+ EOF;
 element              : VALUE|BOOLEAN|WORD;
 operation            : EQUALS|ADD;
-statement            : element (operation element)*;
+ifStatement          : 'si' condition 'alors' statementThen 'sinon' statementElse;
+statementThen        : statement;
+statementElse        : statement;
+statement            : ifStatement|element (operation element)*;
+condition            : BOOLEAN|element EQUALS element;
 variableDefinition   : 'soit' WORD 'valant' statement;

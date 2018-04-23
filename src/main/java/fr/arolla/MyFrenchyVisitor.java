@@ -47,7 +47,7 @@ public class MyFrenchyVisitor implements FrenchyVisitor<MyFrenchyVisitor> {
         } else {
             String text = ctx.WORD().getText();
             if (variablesByName.containsKey(text)) {
-                item = variablesByName.get(text);
+                item = variablesByName.get(text).value;
             } else {
                 item = evaluate(functionsByName.get(text));
             }

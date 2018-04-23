@@ -61,4 +61,15 @@ public class VariableTest {
         assertThat(context.stack)
                 .contains(Variable.of("z", new IntegerValue(5)));
     }
+
+    @Test
+    public void should_assign_a_value() {
+        String text = "soit x valant 1 + 1\n" +
+                "soit z valant x";
+
+        MyFrenchyVisitor context = visitor.visit(text);
+
+        assertThat(context.stack)
+                .contains(Variable.of("z", new IntegerValue(2)));
+    }
 }

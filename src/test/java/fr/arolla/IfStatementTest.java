@@ -16,7 +16,7 @@ public class IfStatementTest {
     }
 
     @Test
-    public void should_create_an_initialized_variable() {
+    public void should_create_an_initialized_variable_based_on_condition() {
         String text = "soit x valant si vrai alors 1 sinon 0";
 
         MyFrenchyVisitor context = visitor.visit(text);
@@ -24,4 +24,12 @@ public class IfStatementTest {
         assertThat(context.stack).containsExactly(Variable.of("x", new IntegerValue(1)));
     }
 
+    @Test
+    public void should_create_an_initialized_variable_based_on_a_test() {
+        String text = "soit x valant si 1 égale 1 alors 1 sinon 0";
+
+        MyFrenchyVisitor context = visitor.visit(text);
+
+        assertThat(context.stack).containsExactly(Variable.of("x", new IntegerValue(1)));
+    }
 }

@@ -96,7 +96,14 @@ public class MyFrenchyVisitor implements FrenchyVisitor<MyFrenchyVisitor> {
 
     @Override
     public MyFrenchyVisitor visitCondition(ConditionContext ctx) {
-        boolean condition = VRAI.equals(ctx.BOOLEAN().getText());
+        boolean condition;
+        if (ctx.BOOLEAN() != null) {
+            condition = VRAI.equals(ctx.BOOLEAN().getText());
+        } else {
+            Value left = (Value) ctx.element(0).accept(this).stack.pop();
+            Value right = (Value) ctx.element(1).accept(this).stack.pop();
+            condition = left.equals(right);
+        }
         this.stack.push(new BooleanValue(condition));
         return this;
     }

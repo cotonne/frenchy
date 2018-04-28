@@ -71,4 +71,30 @@ public class FunctionTest {
                 Variable.of("w", new IntegerValue(100))
         );
     }
+
+
+    @Test
+    public void more_complex_function() {
+        String text = "étant donné la fonction f retournant " +
+                "   soit z valant 2\n" +
+                " si z égale 7 alors x + z sinon 9" +
+                "alors\n" +
+                "étant donné la fonction g retournant " +
+                "   soit y valant 1\n" +
+                "   soit x valant z\n" +
+                "   x + y " +
+                "alors\n" +
+                "soit x valant 5\n" +
+                "soit z valant 7\n" +
+                "soit w valant f + g";
+
+        MyFrenchyVisitor context = visitor.visit(text);
+
+        assertThat(context.stack).containsOnly(
+                Variable.of("x", new IntegerValue(5)),
+                Variable.of("z", new IntegerValue(7)),
+                Variable.of("w", new IntegerValue(17))
+        );
+    }
+
 }

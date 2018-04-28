@@ -26,6 +26,14 @@ public class MyFrenchyVisitor implements FrenchyVisitor<MyFrenchyVisitor> {
     private Map<String, Variable> variablesByName = new HashMap<>();
     private Map<String, List<FunctionStatementContext>> functionsByName = new HashMap<>();
 
+    public MyFrenchyVisitor() {
+    }
+
+    public MyFrenchyVisitor(MyFrenchyVisitor myFrenchyVisitor) {
+        variablesByName = new HashMap<>(myFrenchyVisitor.variablesByName);
+        functionsByName = new HashMap<>(myFrenchyVisitor.functionsByName);
+    }
+
     @Override
     public MyFrenchyVisitor visitProgram(ProgramContext ctx) {
         for (VariableDefinitionContext context : ctx.variableDefinition()) {
@@ -57,7 +65,7 @@ public class MyFrenchyVisitor implements FrenchyVisitor<MyFrenchyVisitor> {
     }
 
     private Value evaluate(List<FunctionStatementContext> functionDefinitionContexts) {
-        MyFrenchyVisitor visitor = this;
+        MyFrenchyVisitor visitor = new MyFrenchyVisitor(this);
         for (FunctionStatementContext line : functionDefinitionContexts) {
             visitor = line.accept(visitor);
         }

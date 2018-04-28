@@ -12,8 +12,14 @@ import java.util.Arrays;
 public class VisualizeAST {
     public static void main(String[] args) {
         //prepare token stream
-        String s = "soit x valant 1 + 1\n" +
-                "soit z valant x";
+        String s = "étant donné la fonction f retournant " +
+                "   soit z valant 2\n" +
+                "   x + z " +
+                "alors\n" +
+                "soit z valant 100\n" +
+                "soit x valant 1\n" +
+                "soit y valant f\n" +
+                "soit w valant z";
         FrenchyLexer lexer = new FrenchyLexer(CharStreams.fromString(s));
         // Get a list of matched tokens
         CommonTokenStream tokens = new CommonTokenStream(lexer);

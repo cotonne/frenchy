@@ -38,7 +38,6 @@ public class MyFrenchyVisitor implements FrenchyVisitor<MyFrenchyVisitor> {
     public MyFrenchyVisitor visitProgram(ProgramContext ctx) {
         for (VariableDefinitionContext context : ctx.variableDefinition()) {
             MyFrenchyVisitor accept = context.accept(this);
-            stack.push(accept.stack.pop());
         }
         return this;
     }
@@ -102,17 +101,17 @@ public class MyFrenchyVisitor implements FrenchyVisitor<MyFrenchyVisitor> {
 
     @Override
     public MyFrenchyVisitor visitStatement(StatementContext ctx) {
-        List<Object> l = new ArrayList<>();
+        List<Object> elementOrOperation = new ArrayList<>();
         for (int i = 0; i < ctx.getChildCount(); i++) {
-            l.add(ctx.getChild(i).accept(this).stack.pop());
+            elementOrOperation.add(ctx.getChild(i).accept(this).stack.pop());
         }
-        while (l.size() > 1) {
-            Value left = (Value) l.remove(0);
-            BiFunction<Value, Value, Value> operation = (BiFunction<Value, Value, Value>) l.remove(0);
-            Value right = (Value) l.remove(0);
-            l.add(0, operation.apply(left, right));
+        while (elementOrOperation.size() > 1) {
+            Value left = (Value) elementOrOperation.remove(0);
+            BiFunction<Value, Value, Value> operation = (BiFunction<Value, Value, Value>) elementOrOperation.remove(0);
+            Value right = (Value) elementOrOperation.remove(0);
+            elementOrOperation.add(0, operation.apply(left, right));
         }
-        stack.push(l.get(0));
+        stack.push(elementOrOperation.get(0));
         return this;
     }
 
